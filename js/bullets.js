@@ -22,7 +22,10 @@ class Bullets {
         this.bulletPos.x += this.augustVel.y
         this.bulletPos.y -= this.augustVel.x
     }
-    bulletDamage() {
-        return 3
+    bullX() {
+        return this.bulletPos.x
+    }
+    bullY() {
+        return this.bulletPos.y
     }
 }

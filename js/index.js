@@ -72,7 +72,6 @@ const iceBlast = {
             this.player.augustPos.y < this.platform.platformPos.y + this.platform.platformSize.h &&
             this.player.augustSize.h + this.player.augustPos.y > this.platform.platformPos.y) {
             // ¡colision detectada!
-            console.log('colision')
             if (this.player.augustVel.y > 0) {
                 this.player.bounce()
             }
