@@ -7,14 +7,12 @@ const iceBlast = {
     ctx: undefined,
     player: undefined,
     platforms: [],
-    bullets: [],
 
     init() {
         this.setContext()
         this.setSize()
         this.fillDoc()
         this.mainPlayer()
-        this.setEventHandlers()
         this.drawAll()
         this.createPlatform()
         this.detectCollisions()
@@ -53,13 +51,6 @@ const iceBlast = {
             this.player.draw()
             this.platform.draw()
         }, 40)
-    },
-    setEventHandlers() {
-        document.addEventListener('keydown', event => {
-            const { key } = event
-            key === 'ArrowRight' ? this.player.moveRight() : null
-            key === 'ArrowLeft' ? this.player.moveLeft() : null
-        })
     },
     moveDown() { // mover todos los elementos +y
     },

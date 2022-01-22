@@ -1,26 +1,30 @@
 class Player { // August
     constructor(ctx, posX, posY, gameSize) {
         this.ctx = ctx;
+        this.augustSize = { w: 50, h: 50 }
         this.augustPos = { x: posX, y: posY };
+        this.augustPosY0 = this.augustPos.y
         this.gameSize = gameSize;
 
         this.augustVel = { x: 0, y: 0 }
         this.augustPhysics = { gravity: 0.8 }
+        this.bullets = []
 
-        this.augustSize = { w: 50, h: 50 }
 
         this.init();
     }
 
     init() {
         this.draw()
-
+        this.setEventHandlers()
     }
 
     draw() { // Augusto
         this.ctx.fillStyle = 'Black';
         this.ctx.fillRect(this.augustPos.x, this.augustPos.y, this.augustSize.w, this.augustSize.h)
         this.gravity()
+        this.bullets.forEach(bullet => bullet.draw())
+        this.clearBullets()
     }
 
     moveRight() {
@@ -48,6 +52,16 @@ class Player { // August
     }
 
 
+    setEventHandlers() {
+        document.addEventListener('keydown', event => {
+            const { key } = event
+            key === 'ArrowRight' ? this.moveRight() : null
+            key === 'ArrowLeft' ? this.moveLeft() : null
+            key === ' ' ? this.shoot() : null
+        })
+    }
+
+
     // resetVelocity() {
     //     // set a velocity
     //     this.augustVel.y = 2 + this.augustPhysics.gravity
@@ -70,5 +84,14 @@ class Player { // August
     //     return false
 
     // }
+
+    shoot() {
+        this.bullets.push(new Bullets(this.ctx, this.augustPos.x, this.augustPos.y, this.augustPosY0, this.augustSize.w, this.augustSize.h, this.gameSize))
+        console.log(this.bullets)
+    }
+
+    clearBullets() {
+        this.bullets = this.bullets.filter(bull => bull.bulletPos.x <= this.gameSize)
+    }
 
 }
