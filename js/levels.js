@@ -1,3 +1,5 @@
 class Level {
-    constructor(ctx,)
+    constructor(ctx,) {
+
+    }
 }
