@@ -1,13 +1,12 @@
 class Player { // August
-    constructor(ctx, posX, posY, gameSize) {
+    constructor(ctx, posX, posY, gameSizeW, gameSize) {
         this.ctx = ctx;
         this.augustSize = { w: 50, h: 50 }
-        this.augustPos = { x: posX, y: posY };
-        this.augustPosY0 = this.augustPos.y
+        this.augustPos = { x: posX, y: posY }
         this.gameSize = gameSize;
-
+        this.gameSizeW = gameSizeW
         this.augustVel = { x: 0, y: 0 }
-        this.augustPhysics = { gravity: 0.8 }
+        this.augustPhysics = { gravity: 1 }
         this.bullets = []
 
 
@@ -28,11 +27,12 @@ class Player { // August
     }
 
     moveRight() {
-        this.augustPos.x += 10;
+        this.augustPos.x += 20;
+        this.crossScreenRight()
     }
-
     moveLeft() {
-        this.augustPos.x -= 10;
+        this.augustPos.x -= 20;
+        this.croosScreenLeft()
     }
 
     gravity() {
@@ -44,13 +44,27 @@ class Player { // August
         }
     }
 
+    bounce() {
+        this.augustVel.y = -22
+    }
+
     checkCollision() {
         if (this.augustPos.y >= this.gameSize.h - this.augustSize.h) {
-            console.log("colission")
             return true
         }
     }
 
+    crossScreenRight() {
+        if (this.augustPos.x > this.gameSize.w) {
+            this.augustPos.x = 0 - this.augustSize.w
+        }
+    }
+
+    croosScreenLeft() {
+        if (this.augustPos.x + this.augustSize.w < 0) {
+            this.augustPos.x = this.gameSize.w
+        }
+    }
 
     setEventHandlers() {
         document.addEventListener('keydown', event => {
@@ -61,37 +75,13 @@ class Player { // August
         })
     }
 
-
-    // resetVelocity() {
-    //     // set a velocity
-    //     this.augustVel.y = 2 + this.augustPhysics.gravity
-    // }
-
-    // physics() {
-
-    //     this.augustVel.y = this.resetVelocity()
-    //     this.augustPos.y += this.augustVel.y
-
-    //     if (this.checkCollisionY()) {
-    //         this.augustVel.y *= -1
-    //     }
-    // }
-
-    // checkCollisionY() {
-    //     if (this.augustPos.y >= this.gameSize.h - this.augustSize.h) { // bottom
-    //         return true
-    //     }
-    //     return false
-
-    // }
-
     shoot() {
-        this.bullets.push(new Bullets(this.ctx, this.augustPos.x, this.augustPos.y, this.augustPosY0, this.augustSize.w, this.augustSize.h, this.gameSize))
+        this.bullets.push(new Bullets(this.ctx, this.augustPos.x, this.augustPos.y, this.augustSize.w, this.augustSize.h))
         console.log(this.bullets)
     }
 
     clearBullets() {
-        this.bullets = this.bullets.filter(bull => bull.bulletPos.x <= this.gameSize)
+        this.bullets = this.bullets.filter(bull => bull.bulletPos.y >= 0)
     }
 
 }

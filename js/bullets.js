@@ -1,11 +1,9 @@
 class Bullets {
-    constructor(ctx, augustPosX, augustPosY, augustPosY0, augustW, augustH, gameSize) {
+    constructor(ctx, augustPosX, augustPosY, augustW, augustH) {
         this.ctx = ctx
-        this.bulletPos = { x: augustPosX + augustW, y: augustPosY + (augustH / 2) }
-        this.augustPosY0 = augustPosY0
-        this.gameSize = gameSize
+        this.bulletPos = { x: augustPosX + 20, y: augustPosY + (augustH / 2) }
         this.augustSize = { w: augustW, h: augustH }
-        this.augustVel = { x: 10, y: 1 }
+        this.augustVel = { x: 25, y: 1 }
 
         this.init()
     }
@@ -15,15 +13,16 @@ class Bullets {
         this.move()
     }
     draw() {
-        this.ctx.beginPath()
         this.ctx.fillStyle = 'black'
         this.ctx.fillRect(this.bulletPos.x, this.bulletPos.y, 10, 10)
-        this.ctx.closePath()
 
         this.move()
     }
     move() {
-        this.bulletPos.x += this.augustVel.x
-        this.bulletPos.y += this.augustVel.y
+        this.bulletPos.x += this.augustVel.y
+        this.bulletPos.y -= this.augustVel.x
+    }
+    bulletDamage() {
+        return 3
     }
 }
