@@ -52,7 +52,6 @@ const iceBlast = {
             this.fillDoc()
             this.player.draw()
             this.platform.draw()
-
         }, 40)
     },
     setEventHandlers() {
@@ -63,7 +62,6 @@ const iceBlast = {
         })
     },
     moveDown() { // mover todos los elementos +y
-
     },
     detectCollisions() {
         if (this.player.augustPos.x < this.platform.platformPos.x + this.platform.platformSize.w &&

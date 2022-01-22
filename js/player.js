@@ -3,8 +3,10 @@ class Player { // August
         this.ctx = ctx;
         this.augustPos = { x: posX, y: posY };
         this.gameSize = gameSize;
+
         this.augustVel = { x: 0, y: 0 }
         this.augustPhysics = { gravity: 0.8 }
+
         this.augustSize = { w: 50, h: 50 }
 
         this.init();

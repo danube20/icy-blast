@@ -21,4 +21,5 @@ class Platforms {
     //     let rand = Math.round(range.min + Math.random() * delta)
     //     return rand
     // }
+
 }
