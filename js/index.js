@@ -7,8 +7,9 @@ const iceBlast = {
     ctx: undefined,
     player: undefined,
     platforms: [],
+    platformsCounter: 0,
     enemies: undefined,
-    bulletDmg: undefined,
+    bullets: undefined,
 
     init() {
         this.setContext()
@@ -19,6 +20,7 @@ const iceBlast = {
         this.createPlatform()
         this.detectCollisions()
         this.createEnenemies()
+        this.checkHealth()
     },
 
     setContext() {
@@ -42,40 +44,54 @@ const iceBlast = {
         this.player = new Player(this.ctx, this.gameSize.w / 2, this.gameSize.h / 2, this.gameSize.w, this.gameSize)
     },
     createPlatform() {
-        this.platform = new Platforms(this.ctx, this.gameSize)
+        this.platforms.push(new Platform(this.ctx, this.gameSize))
     },
     createEnenemies() {
         this.enemies = new Enemy(this.ctx, this.gameSize, this.bulletDmg)
     },
-    bulletDamage() {
-        this.bulletDmg = new Bullets().bulletDamage();
+    invokeBullets() {
+        this.bullets = new Bullets()
+    },
+    checkHealth() {
+        if (this.bullets.bulletPos.x < this.enemies.enemyPos.x + this.enemies.enemySize.w &&
+            this.bullets.bulletPos.x + this.bullets.bulletSize.w > this.enemies.enemyPos.x &&
+            this.bullets.bulletPos.y < this.enemies.enemyPos.y + this.enemies.enemySize.h &&
+            this.bullets.bulletSize.h + this.bullets.bulletPos.y > this.enemies.enemyPos.y) {
+            console.log('asdad');
+        }
     },
     clearAll() {
         this.ctx.clearRect(0, 0, this.gameSize.w, this.gameSize.h)
-    },
-    drawAll() {
+    }, drawAll() {
         setInterval(() => {
+            this.platformsCounter += 1
+            this.platformsCounter % 40 === 0 ? this.createPlatform() : null
             this.clearAll()
             this.fillDoc()
             this.player.draw()
-            this.platform.draw()
+            this.platforms.forEach(elm => {
+                elm.draw()
+            })
             this.enemies.draw()
             this.player.clearBullets()
             this.detectCollisions()
+            console.log(this.platforms)
         }, 40)
     },
     moveDown() { // mover todos los elementos +y
     },
     detectCollisions() {
-        if (this.player.augustPos.x < this.platform.platformPos.x + this.platform.platformSize.w &&
-            this.player.augustPos.x + this.player.augustSize.w > this.platform.platformPos.x &&
-            this.player.augustPos.y < this.platform.platformPos.y + this.platform.platformSize.h &&
-            this.player.augustSize.h + this.player.augustPos.y > this.platform.platformPos.y) {
-            // ¡colision detectada!
-            if (this.player.augustVel.y > 0) {
-                this.player.bounce()
+        this.platforms.forEach((eachPlatform) => {
+            if (this.player.augustPos.x < eachPlatform.platformPos.x + eachPlatform.platformSize.w &&
+                this.player.augustPos.x + this.player.augustSize.w > eachPlatform.platformPos.x &&
+                this.player.augustPos.y < eachPlatform.platformPos.y + eachPlatform.platformSize.h &&
+                this.player.augustSize.h + this.player.augustPos.y > eachPlatform.platformPos.y) {
+                // ¡colision detectada!
+                if (this.player.augustVel.y > 0) {
+                    this.player.bounce()
+                }
             }
-        }
+        })
     }
 }
 iceBlast.init()

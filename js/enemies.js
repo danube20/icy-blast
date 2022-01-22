@@ -18,12 +18,6 @@ class Enemy {
         this.ctx.fillRect(this.enemyPos.x, this.enemyPos.y, this.enemySize.w, this.enemySize.h)
     }
     checkDamage() {
-        let bullElmX = new Bullets().bullX()
-        let bullElmY = new Bullets().bullY()
-        if (bullElmX === this.enemyPos.x && bullElmY === this.enemyPos.y) {
-            this.health -= 3
-            console.log(this.health);
-        }
         if (this.health === 0) {
             this.ctx.clearRect(this.enemyPos.x, this.enemyPos.y, this.enemySize.w, this.enemySize.h)
         }
