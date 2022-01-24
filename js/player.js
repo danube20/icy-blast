@@ -6,7 +6,7 @@ class Player { // August
         this.gameSize = gameSize;
         this.gameSizeW = gameSizeW
         this.augustVel = { x: 0, y: 0 }
-        this.augustPhysics = { gravity: 1 }
+        this.augustPhysics = { gravity: .8 }
         this.bullets = []
         this.keyPressed = []
         this.enemies = undefined
@@ -31,11 +31,11 @@ class Player { // August
     movement() {
         this.keyPressed.forEach(elm => {
             if (elm.includes('ArrowRight')) {
-                this.augustPos.x += 20;
+                this.augustPos.x += 5;
                 this.crossScreenRight()
             }
             else if (elm.includes('ArrowLeft')) {
-                this.augustPos.x -= 20;
+                this.augustPos.x -= 5;
                 this.crossScreenLeft()
             }
             else if (elm.includes('shoot')) {
@@ -66,12 +66,12 @@ class Player { // August
         this.augustPos.y += this.augustVel.y
 
         if (this.checkCollision()) {
-            this.augustVel.y = -25
+            this.augustVel.y = -16
         }
     }
 
     bounce() {
-        this.augustVel.y = -22
+        this.augustVel.y = -16
     }
 
     checkCollision() {

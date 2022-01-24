@@ -14,6 +14,7 @@ const iceBlast = {
     platformsCounter: 0,
     enemies: undefined,
     bullets: undefined,
+    FPS: 60,
 
     init() {
         this.setContext()
@@ -42,8 +43,6 @@ const iceBlast = {
     fillDoc() {
         this.ctx.fillStyle = 'red'
         this.ctx.fillRect(0, 0, this.gameSize.w, this.gameSize.h)
-        this.ctx.fillStyle = 'white'
-        this.ctx.fillRect(200, 320, 300, 1)
     },
     mainPlayer() {
         this.player = new Player(this.ctx, this.gameSize.w / 2, this.gameSize.h / 2, this.gameSize.w, this.gameSize)
@@ -88,7 +87,7 @@ const iceBlast = {
             this.detectCollisions()
             this.player.movement()
             this.moveDown()
-        }, 40)
+        }, 1000 / this.FPS)
     },
     moveDown() { // mover todos los elementos +y
         if (this.player.augustPos.y < 450 && this.player.augustVel.y < 0) {
@@ -102,7 +101,7 @@ const iceBlast = {
             this.platforms.platforms3.forEach((eachPlatform) => {
                 eachPlatform.platformPos.y += 3
             })
-            this.enemies.enemyPos.y += 2
+            this.enemies.enemyPos.y += 3
         }
     },
     detectCollisions() {
