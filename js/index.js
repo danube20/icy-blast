@@ -15,6 +15,7 @@ const iceBlast = {
     enemies: undefined,
     bullets: undefined,
     FPS: 60,
+    jumpPixels: 0,
 
     init() {
         this.setContext()
@@ -26,7 +27,6 @@ const iceBlast = {
         this.detectCollisions()
         this.createEnenemies()
         this.createBullets()
-        this.moveDown()
     },
 
     setContext() {
@@ -66,7 +66,8 @@ const iceBlast = {
     },
     clearAll() {
         this.ctx.clearRect(0, 0, this.gameSize.w, this.gameSize.h)
-    }, drawAll() {
+    },
+    drawAll() {
         setInterval(() => {
             this.platformsCounter += 1
             // this.platformsCounter % 2 === 0 ? this.createPlatform() : null
@@ -86,23 +87,29 @@ const iceBlast = {
             this.player.clearBullets()
             this.detectCollisions()
             this.player.movement()
-            this.moveDown()
         }, 1000 / this.FPS)
+    }, calculateDistance() {
+        this.jumpPixels = this.collisionPos + 16 * this.player.jumpTime + (0.7 * this.player.jumpTime ** 2) / 2
+        let extraPixels = this.jumpPixels - this.gameSize.h / 2
+        // this.moveDown(extraPixels)
+        // console.log(extraPixels)
     },
-    moveDown() { // mover todos los elementos +y
-        if (this.player.augustPos.y < 450 && this.player.augustVel.y < 0) {
-            // si August está en la mitad del canvas subiendo, que se muevan los elementos
-            this.platforms.platforms1.forEach((eachPlatform) => {
-                eachPlatform.platformPos.y += 3
-            })
-            this.platforms.platforms2.forEach((eachPlatform) => {
-                eachPlatform.platformPos.y += 3
-            })
-            this.platforms.platforms3.forEach((eachPlatform) => {
-                eachPlatform.platformPos.y += 3
-            })
-            this.enemies.enemyPos.y += 3
-        }
+    moveDown(pixels) { // mover todos los elementos +y
+        // if (this.player.augustVel.y < 0) {
+        //     this.player.augustVel.y = 0
+        //     // this.player.augustPos.y = 350
+        //     // si August está en la mitad del canvas subiendo, que se muevan los elementos
+        this.platforms.platforms1.forEach((eachPlatform) => {
+            eachPlatform.platformPos.y += pixels
+        })
+        this.platforms.platforms2.forEach((eachPlatform) => {
+            eachPlatform.platformPos.y += pixels
+        })
+        this.platforms.platforms3.forEach((eachPlatform) => {
+            eachPlatform.platformPos.y += pixels
+        })
+        //     this.enemies.enemyPos.y += pixels
+        // }
     },
     detectCollisions() {
         this.platforms.platforms1.forEach((eachPlatform) => {
@@ -112,7 +119,12 @@ const iceBlast = {
                 this.player.augustSize.h + this.player.augustPos.y > eachPlatform.platformPos.y) {
                 // ¡colision detectada!
                 if (this.player.augustVel.y > 0) {
+                    this.collisionPos = eachPlatform.platformPos.y
+                    // this.collisionPos = this.player.augustPos.y
                     this.player.bounce()
+                    if (eachPlatform.platformPos.y < 2 * this.gameSize.h / 3) {
+                        this.moveDown(2 * this.gameSize.h / 3 - eachPlatform.platformPos.y)
+                    }
                 }
             }
         })
@@ -123,7 +135,11 @@ const iceBlast = {
                 this.player.augustSize.h + this.player.augustPos.y > eachPlatform.platformPos.y) {
                 // ¡colision detectada!
                 if (this.player.augustVel.y > 0) {
+                    this.collisionPos = eachPlatform.platformPos.y
                     this.player.bounce()
+                    if (eachPlatform.platformPos.y < 2 * this.gameSize.h / 3) {
+                        this.moveDown(2 * this.gameSize.h / 3 - eachPlatform.platformPos.y)
+                    }
                 }
             }
         })
@@ -134,7 +150,11 @@ const iceBlast = {
                 this.player.augustSize.h + this.player.augustPos.y > eachPlatform.platformPos.y) {
                 // ¡colision detectada!
                 if (this.player.augustVel.y > 0) {
+                    this.collisionPos = eachPlatform.platformPos.y
                     this.player.bounce()
+                    if (eachPlatform.platformPos.y < 2 * this.gameSize.h / 3) {
+                        this.moveDown(2 * this.gameSize.h / 3 - eachPlatform.platformPos.y)
+                    }
                 }
             }
         })

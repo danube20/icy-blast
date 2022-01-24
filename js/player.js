@@ -8,6 +8,7 @@ class Player { // August
         this.augustVel = { x: 0, y: 0 }
         this.augustPhysics = { gravity: .8 }
         this.bullets = []
+        this.bulletsClass = undefined
         this.keyPressed = []
         this.enemies = undefined
 
@@ -38,19 +39,19 @@ class Player { // August
                 this.augustPos.x -= 5;
                 this.crossScreenLeft()
             }
-            else if (elm.includes('shoot')) {
-                this.shoot()
-            }
         })
     }
 
     setEventHandlers() {
         document.addEventListener('keydown', event => {
             const { key } = event
-            if (key === 'ArrowRight') this.keyPressed.push('ArrowRight')
-            else if (key === 'ArrowLeft') this.keyPressed.push('ArrowLeft')
-            else if (key === ' ') this.keyPressed.push('shoot')
+            if (key === 'ArrowRight' && !this.keyPressed.includes('ArrowRight')) this.keyPressed.push('ArrowRight')
+            else if (key === 'ArrowLeft' && !this.keyPressed.includes('ArrowLeft')) this.keyPressed.push('ArrowLeft')
             else return null
+        })
+        document.addEventListener('keydown', event => {
+            const { key } = event
+            key === ' ' ? this.shoot() : null
         })
         document.addEventListener('keyup', event => {
             const { key } = event
@@ -65,9 +66,7 @@ class Player { // August
         this.augustVel.y += this.augustPhysics.gravity
         this.augustPos.y += this.augustVel.y
 
-        if (this.checkCollision()) {
-            this.augustVel.y = -16
-        }
+        if (this.checkCollision()) this.augustVel.y = -16
     }
 
     bounce() {
@@ -75,23 +74,20 @@ class Player { // August
     }
 
     checkCollision() {
-        if (this.augustPos.y >= this.gameSize.h - this.augustSize.h) {
-            return true
-        }
+        if (this.augustPos.y >= this.gameSize.h - this.augustSize.h) return true
     }
 
     crossScreenRight() {
-        if (this.augustPos.x > this.gameSize.w) {
-            this.augustPos.x = 0 - this.augustSize.w
-        }
+        if (this.augustPos.x > this.gameSize.w) this.augustPos.x = 0 - this.augustSize.w
     }
 
     crossScreenLeft() {
-        if (this.augustPos.x + this.augustSize.w < 0) {
-            this.augustPos.x = this.gameSize.w
-        }
+        if (this.augustPos.x + this.augustSize.w < 0) this.augustPos.x = this.gameSize.w
     }
 
+    createBullets() {
+        this.bulletsClass = new Bullets(this.ctx, this.augustPos.x, this.augustPos.y, this.augustSize.w, this.augustSize.h)
+    }
 
     shoot() {
         this.bullets.push(new Bullets(this.ctx, this.augustPos.x, this.augustPos.y, this.augustSize.w, this.augustSize.h))
