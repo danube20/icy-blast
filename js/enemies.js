@@ -11,7 +11,6 @@ class Enemy {
 
     init() {
         this.draw()
-        console.log(this.health);
     }
     draw() {
         this.ctx.fillStyle = 'green'

@@ -8,7 +8,8 @@ class Player { // August
         this.augustVel = { x: 0, y: 0 }
         this.augustPhysics = { gravity: 1 }
         this.bullets = []
-
+        this.keyPressed = []
+        this.enemies = undefined
 
         this.init();
     }
@@ -16,6 +17,7 @@ class Player { // August
     init() {
         this.draw()
         this.setEventHandlers()
+        this.checkHealth()
     }
 
     draw() { // Augusto
@@ -26,13 +28,37 @@ class Player { // August
         this.clearBullets()
     }
 
-    moveRight() {
-        this.augustPos.x += 20;
-        this.crossScreenRight()
+    movement() {
+        this.keyPressed.forEach(elm => {
+            if (elm.includes('ArrowRight')) {
+                this.augustPos.x += 20;
+                this.crossScreenRight()
+            }
+            else if (elm.includes('ArrowLeft')) {
+                this.augustPos.x -= 20;
+                this.crossScreenLeft()
+            }
+            else if (elm.includes('shoot')) {
+                this.shoot()
+            }
+        })
     }
-    moveLeft() {
-        this.augustPos.x -= 20;
-        this.croosScreenLeft()
+
+    setEventHandlers() {
+        document.addEventListener('keydown', event => {
+            const { key } = event
+            if (key === 'ArrowRight') this.keyPressed.push('ArrowRight')
+            else if (key === 'ArrowLeft') this.keyPressed.push('ArrowLeft')
+            else if (key === ' ') this.keyPressed.push('shoot')
+            else return null
+        })
+        document.addEventListener('keyup', event => {
+            const { key } = event
+            if (key === 'ArrowRight') this.keyPressed = []
+            else if (key === 'ArrowLeft') this.keyPressed = []
+            else if (key === ' ') this.keyPressed = []
+            else return null
+        })
     }
 
     gravity() {
@@ -60,28 +86,32 @@ class Player { // August
         }
     }
 
-    croosScreenLeft() {
+    crossScreenLeft() {
         if (this.augustPos.x + this.augustSize.w < 0) {
             this.augustPos.x = this.gameSize.w
         }
     }
 
-    setEventHandlers() {
-        document.addEventListener('keydown', event => {
-            const { key } = event
-            key === 'ArrowRight' ? this.moveRight() : null
-            key === 'ArrowLeft' ? this.moveLeft() : null
-            key === ' ' ? this.shoot() : null
-        })
-    }
 
     shoot() {
         this.bullets.push(new Bullets(this.ctx, this.augustPos.x, this.augustPos.y, this.augustSize.w, this.augustSize.h))
-        console.log(this.bullets)
     }
 
     clearBullets() {
         this.bullets = this.bullets.filter(bull => bull.bulletPos.y >= 0)
+    }
+    callEnemy() {
+        this.enemies = new Enemy(this.ctx, this.gameSize)
+    }
+    checkHealth() {
+        this.bullets.map(elm => {
+            if (elm.bulletPos.x < this.enemies.enemyPos.x + this.enemies.enemySize.w &&
+                elm.bulletPos.x + elm.bulletSize.w > this.enemies.enemyPos.x &&
+                elm.bulletPos.y < this.enemies.enemyPos.y + this.enemies.enemySize.h &&
+                elm.bulletSize.h + elm.bulletPos.y > this.enemies.enemyPos.y) {
+                console.log('asdad');
+            }
+        })
     }
 
 }
