@@ -6,27 +6,30 @@ const iceBlast = {
     license: undefined,
     ctx: undefined,
     player: undefined,
-    platforms: {
-        platforms1: [],
-        platforms2: [],
-        platforms3: []
-    },
+    background: undefined,
+    platformTypes: [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 1, 2, 2, 1, 2, 1, 1, 1, 2, 1, 2, 2, 2, 1],
+    platforms: [],
+    platformPosition: undefined,
     platformsCounter: 0,
+    platformDistance: 50,
     enemies: undefined,
+    enemiesArr: [],
     bullets: undefined,
     FPS: 60,
-    jumpPixels: 0,
+    scorePoints: 0,
 
     init() {
         this.setContext()
         this.setSize()
-        this.fillDoc()
         this.mainPlayer()
+        this.createBullets()
+        this.createBackground()
         this.drawAll()
         this.createPlatform()
         this.detectCollisions()
-        this.createEnenemies()
-        this.createBullets()
+        this.createEnemies()
+        this.enemiesClass()
+        this.callPlatform()
     },
 
     setContext() {
@@ -40,124 +43,103 @@ const iceBlast = {
         document.querySelector('#canvas').setAttribute('width', this.gameSize.w)
         document.querySelector('#canvas').setAttribute('height', this.gameSize.h)
     },
-    fillDoc() {
-        this.ctx.fillStyle = 'red'
-        this.ctx.fillRect(0, 0, this.gameSize.w, this.gameSize.h)
-    },
-    mainPlayer() {
-        this.player = new Player(this.ctx, this.gameSize.w / 2, this.gameSize.h / 2, this.gameSize.w, this.gameSize)
+    callPlatform() {
+        this.platformPosition = new Platform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance)
     },
     createPlatform() {
-        this.platforms.platforms1.push(new Platform(this.ctx, this.gameSize, 600))
-        this.platforms.platforms1.push(new Platform(this.ctx, this.gameSize, 300))
-        this.platforms.platforms1.push(new Platform(this.ctx, this.gameSize, 100))
-        this.platforms.platforms2.push(new Platform(this.ctx, this.gameSize, 560))
-        this.platforms.platforms2.push(new Platform(this.ctx, this.gameSize, 350))
-        this.platforms.platforms2.push(new Platform(this.ctx, this.gameSize, 260))
-        this.platforms.platforms3.push(new Platform(this.ctx, this.gameSize, 680))
-        this.platforms.platforms3.push(new Platform(this.ctx, this.gameSize, 485))
-        this.platforms.platforms3.push(new Platform(this.ctx, this.gameSize, 30))
+        this.platformTypes.forEach((eachNumber) => {
+            if (eachNumber === 1) {
+                this.platforms.push(new Platform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance))
+                this.platformDistance += 150
+            } else if (eachNumber === 2) {
+                this.platforms.push(new MovingPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance))
+                this.platformDistance += 150
+            }
+        })
     },
-    createEnenemies() {
-        this.enemies = new Enemy(this.ctx, this.gameSize, this.bulletDmg)
+    mainPlayer() {
+        this.player = new Player(this.ctx, this.gameSize.w / 2, this.gameSize.h / 2, this.gameSize.w, this.gameSize, this.platforms)
+    },
+    createBackground() {
+        this.background = new BaseBackground(this.ctx, 0, 0, this.gameSize)
     },
     createBullets() {
-        this.bullets = new Bullets(this.ctx)
+        this.bullets = new Bullets(this.ctx, this.player.augustPos.x, this.player.augustPos.y, this.player.augustSize.w, this.player.augustSize.h)
+    },
+    createEnemies() {
+        this.enemiesArr.push(new Enemy(this.ctx, this.platformPosition.platformPos.x, this.platformPosition.platformPos.y, this.gameSize))
+        this.enemiesArr.push(new Enemy(this.ctx, this.gameSize))
+        this.enemiesArr.push(new Enemy(this.ctx, this.gameSize))
+        this.enemiesArr.push(new Enemy(this.ctx, this.gameSize))
+    },
+    enemiesClass() {
+        this.enemies = new Enemy(this.ctx, this.gameSize)
     },
     clearAll() {
         this.ctx.clearRect(0, 0, this.gameSize.w, this.gameSize.h)
     },
+    score() {
+        // su distancia a la primera plataforma
+        this.scorePoints = Math.floor((this.platforms[0].platformPos.y - this.gameSize.h + 50) / 20) //posición inicial
+    },
+    drawScore() {
+        this.ctx.font = '30px sans-serif'
+        this.ctx.fillStyle = 'white'
+        if (this.scorePoints < 10) this.ctx.fillText(this.scorePoints, 267, 62)
+        else if (this.scorePoints >= 10 && this.scorePoints < 100) this.ctx.fillText(this.scorePoints, 259, 62)
+        else this.ctx.fillText(this.scorePoints, 249, 62)
+    },
+    detectCollisions() {
+        this.platforms.forEach((eachPlatform) => {
+            if (this.player.augustPos.x < eachPlatform.platformPos.x + eachPlatform.platformSize.w &&
+                this.player.augustPos.x + this.player.augustSize.w > eachPlatform.platformPos.x &&
+                this.player.augustPos.y + this.player.augustSize.h < eachPlatform.platformPos.y + eachPlatform.platformSize.h &&
+                this.player.augustSize.h + this.player.augustPos.y > eachPlatform.platformPos.y) {
+                if (this.player.augustVel.y > 0) {
+                    this.player.bounce()
+                }
+            }
+        })
+    },
+    checkHealth() {
+        this.player.bullets.forEach(elm => {
+            this.enemiesArr.forEach(elm1 => {
+                if (elm.bulletPos.x < elm1.enemyPos.x + elm1.enemySize.w &&
+                    elm.bulletPos.x + elm.bulletSize.w - 45 > elm1.enemyPos.x &&
+                    elm.bulletPos.y < elm1.enemyPos.y + elm1.enemySize.h &&
+                    elm.bulletSize.h - 45 + elm.bulletPos.y > elm1.enemyPos.y) {
+                    if (elm1.health > 0) {
+                        elm1.health -= 5
+                    }
+                    if (elm1.health === 0) {
+                        let id = this.enemiesArr.indexOf(elm1)
+                        this.enemiesArr.splice(id, 1)
+                    }
+                }
+            })
+        })
+    },
     drawAll() {
         setInterval(() => {
-            this.platformsCounter += 1
-            // this.platformsCounter % 2 === 0 ? this.createPlatform() : null
             this.clearAll()
-            this.fillDoc()
+            this.background.draw()
             this.player.draw()
-            this.platforms.platforms1.forEach(elm => {
+            this.platforms.forEach(elm => {
+                elm.draw()
+                if (elm instanceof MovingPlatform) {
+                    elm.move()
+                }
+            })
+            this.enemiesArr.forEach(elm => {
                 elm.draw()
             })
-            this.platforms.platforms2.forEach(elm => {
-                elm.draw()
-            })
-            this.platforms.platforms3.forEach(elm => {
-                elm.draw()
-            })
-            this.enemies.draw()
             this.player.clearBullets()
             this.detectCollisions()
             this.player.movement()
+            this.checkHealth()
+            this.score()
+            this.drawScore()
         }, 1000 / this.FPS)
-    }, calculateDistance() {
-        this.jumpPixels = this.collisionPos + 16 * this.player.jumpTime + (0.7 * this.player.jumpTime ** 2) / 2
-        let extraPixels = this.jumpPixels - this.gameSize.h / 2
-        // this.moveDown(extraPixels)
-        // console.log(extraPixels)
-    },
-    moveDown(pixels) { // mover todos los elementos +y
-        // if (this.player.augustVel.y < 0) {
-        //     this.player.augustVel.y = 0
-        //     // this.player.augustPos.y = 350
-        //     // si August está en la mitad del canvas subiendo, que se muevan los elementos
-        this.platforms.platforms1.forEach((eachPlatform) => {
-            eachPlatform.platformPos.y += pixels
-        })
-        this.platforms.platforms2.forEach((eachPlatform) => {
-            eachPlatform.platformPos.y += pixels
-        })
-        this.platforms.platforms3.forEach((eachPlatform) => {
-            eachPlatform.platformPos.y += pixels
-        })
-        //     this.enemies.enemyPos.y += pixels
-        // }
-    },
-    detectCollisions() {
-        this.platforms.platforms1.forEach((eachPlatform) => {
-            if (this.player.augustPos.x < eachPlatform.platformPos.x + eachPlatform.platformSize.w &&
-                this.player.augustPos.x + this.player.augustSize.w > eachPlatform.platformPos.x &&
-                this.player.augustPos.y < eachPlatform.platformPos.y + eachPlatform.platformSize.h &&
-                this.player.augustSize.h + this.player.augustPos.y > eachPlatform.platformPos.y) {
-                // ¡colision detectada!
-                if (this.player.augustVel.y > 0) {
-                    this.collisionPos = eachPlatform.platformPos.y
-                    // this.collisionPos = this.player.augustPos.y
-                    this.player.bounce()
-                    if (eachPlatform.platformPos.y < 2 * this.gameSize.h / 3) {
-                        this.moveDown(2 * this.gameSize.h / 3 - eachPlatform.platformPos.y)
-                    }
-                }
-            }
-        })
-        this.platforms.platforms2.forEach((eachPlatform) => {
-            if (this.player.augustPos.x < eachPlatform.platformPos.x + eachPlatform.platformSize.w &&
-                this.player.augustPos.x + this.player.augustSize.w > eachPlatform.platformPos.x &&
-                this.player.augustPos.y < eachPlatform.platformPos.y + eachPlatform.platformSize.h &&
-                this.player.augustSize.h + this.player.augustPos.y > eachPlatform.platformPos.y) {
-                // ¡colision detectada!
-                if (this.player.augustVel.y > 0) {
-                    this.collisionPos = eachPlatform.platformPos.y
-                    this.player.bounce()
-                    if (eachPlatform.platformPos.y < 2 * this.gameSize.h / 3) {
-                        this.moveDown(2 * this.gameSize.h / 3 - eachPlatform.platformPos.y)
-                    }
-                }
-            }
-        })
-        this.platforms.platforms3.forEach((eachPlatform) => {
-            if (this.player.augustPos.x < eachPlatform.platformPos.x + eachPlatform.platformSize.w &&
-                this.player.augustPos.x + this.player.augustSize.w > eachPlatform.platformPos.x &&
-                this.player.augustPos.y < eachPlatform.platformPos.y + eachPlatform.platformSize.h &&
-                this.player.augustSize.h + this.player.augustPos.y > eachPlatform.platformPos.y) {
-                // ¡colision detectada!
-                if (this.player.augustVel.y > 0) {
-                    this.collisionPos = eachPlatform.platformPos.y
-                    this.player.bounce()
-                    if (eachPlatform.platformPos.y < 2 * this.gameSize.h / 3) {
-                        this.moveDown(2 * this.gameSize.h / 3 - eachPlatform.platformPos.y)
-                    }
-                }
-            }
-        })
     }
 }
 iceBlast.init()

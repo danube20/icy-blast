@@ -1,16 +1,17 @@
 class Player { // August
-    constructor(ctx, posX, posY, gameSizeW, gameSize) {
+    constructor(ctx, posX, posY, gameSizeW, gameSize, platforms) {
         this.ctx = ctx;
-        this.augustSize = { w: 50, h: 50 }
+        this.augustSize = { w: 45, h: 45 }
         this.augustPos = { x: posX, y: posY }
         this.gameSize = gameSize;
         this.gameSizeW = gameSizeW
         this.augustVel = { x: 0, y: 0 }
-        this.augustPhysics = { gravity: .8 }
+        this.augustPhysics = { gravity: .6 }
         this.bullets = []
         this.bulletsClass = undefined
         this.keyPressed = []
-        this.enemies = undefined
+        this.platforms = platforms
+        this.score = 0
 
         this.init();
     }
@@ -18,11 +19,10 @@ class Player { // August
     init() {
         this.draw()
         this.setEventHandlers()
-        this.checkHealth()
     }
 
     draw() { // Augusto
-        this.ctx.fillStyle = 'Black';
+        this.ctx.fillStyle = 'white';
         this.ctx.fillRect(this.augustPos.x, this.augustPos.y, this.augustSize.w, this.augustSize.h)
         this.gravity()
         this.bullets.forEach(bullet => bullet.draw())
@@ -63,9 +63,19 @@ class Player { // August
     }
 
     gravity() {
-        this.augustVel.y += this.augustPhysics.gravity
-        this.augustPos.y += this.augustVel.y
-
+        if (this.augustPos.y >= (this.gameSize.h / 2)) {
+            this.augustVel.y += this.augustPhysics.gravity
+            this.augustPos.y += this.augustVel.y
+        } else {
+            this.platforms.forEach((eachPlatform) => {
+                if (this.augustVel.y < 0) {
+                    eachPlatform.platformPos.y -= this.augustVel.y
+                }
+            })
+            this.augustPos.y = this.gameSize.h / 2
+            this.augustVel.y += this.augustPhysics.gravity
+            this.augustPos.y += this.augustVel.y
+        }
         if (this.checkCollision()) this.augustVel.y = -16
     }
 
@@ -96,18 +106,4 @@ class Player { // August
     clearBullets() {
         this.bullets = this.bullets.filter(bull => bull.bulletPos.y >= 0)
     }
-    callEnemy() {
-        this.enemies = new Enemy(this.ctx, this.gameSize)
-    }
-    checkHealth() {
-        this.bullets.map(elm => {
-            if (elm.bulletPos.x < this.enemies.enemyPos.x + this.enemies.enemySize.w &&
-                elm.bulletPos.x + elm.bulletSize.w > this.enemies.enemyPos.x &&
-                elm.bulletPos.y < this.enemies.enemyPos.y + this.enemies.enemySize.h &&
-                elm.bulletSize.h + elm.bulletPos.y > this.enemies.enemyPos.y) {
-                console.log('asdad');
-            }
-        })
-    }
-
 }

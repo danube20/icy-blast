@@ -3,10 +3,21 @@
     padding: 0;
 }
 
+body {
+    background-image: url(../img/web-background.png);
+    background-position: center;
+    background-size: cover;
+}
+
 .board {
     width: auto;
     height: 100vh;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
+    padding-right: 6rem;
+}
+
+#canvas {
+    border-radius: 15px;
 }
