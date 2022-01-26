@@ -7,16 +7,17 @@ const iceBlast = {
     ctx: undefined,
     player: undefined,
     background: undefined,
-    platformTypes: [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 1, 2, 2, 1, 2, 1, 1, 1, 2, 1, 2, 2, 2, 1],
+    platformTypes: [1, 1, 1, 1, 1, 2, 3, 2, 1, 1, 1, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 1, 2, 2, 1, 2, 1, 3, 1, 2, 1, 2, 2, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2, 1, 1, 1],
     platforms: [],
-    platformPosition: undefined,
-    platformsCounter: 0,
     platformDistance: 50,
     enemies: undefined,
     enemiesArr: [],
     bullets: undefined,
     FPS: 60,
     scorePoints: 0,
+    intervalId: undefined,
+    gameOverImgInstance: undefined,
+    framesCounter: 0,
 
     init() {
         this.setContext()
@@ -29,7 +30,8 @@ const iceBlast = {
         this.detectCollisions()
         this.createEnemies()
         this.enemiesClass()
-        this.callPlatform()
+        this.gameOverImgInstance = new Image()
+        this.gameOverImgInstance.src = './img/gameoverbg.png'
     },
 
     setContext() {
@@ -43,22 +45,38 @@ const iceBlast = {
         document.querySelector('#canvas').setAttribute('width', this.gameSize.w)
         document.querySelector('#canvas').setAttribute('height', this.gameSize.h)
     },
-    callPlatform() {
-        this.platformPosition = new Platform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance)
-    },
     createPlatform() {
+        this.platforms.push(new FirstPlatform(240, this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/platform.png'))
+        this.platformDistance += 150
         this.platformTypes.forEach((eachNumber) => {
             if (eachNumber === 1) {
-                this.platforms.push(new Platform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance))
-                this.platformDistance += 150
+                this.platforms.push(new Platform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/platform.png'))
+                this.platformDistance += 130
             } else if (eachNumber === 2) {
-                this.platforms.push(new MovingPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance))
+                this.platforms.push(new MovingPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/platform.png'))
                 this.platformDistance += 150
+            } else if (eachNumber === 3) {
+                this.platforms.push(new PowerUpPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 100, './img/powerUpPlatform.png'))
+                this.platformDistance += 140
+            }
+        })
+    },
+    clearPlatforms() {
+        this.platforms.forEach((eachPlatform, i) => {
+            if (eachPlatform.platformPos.y > this.gameSize.h) {
+                if (!(eachPlatform instanceof FirstPlatform)) {
+                    this.platforms.splice(i, 1)
+                }
             }
         })
     },
     mainPlayer() {
-        this.player = new Player(this.ctx, this.gameSize.w / 2, this.gameSize.h / 2, this.gameSize.w, this.gameSize, this.platforms)
+        this.player = new Player(this.ctx, this.gameSize.w / 2, this.gameSize.h / 2, this.gameSize.w, this.gameSize, this.platforms, this.enemiesArr)
+    },
+    playerFalls() {
+        if (this.player.augustPos.y > 750) {
+            this.gameOver()
+        }
     },
     createBackground() {
         this.background = new BaseBackground(this.ctx, 0, 0, this.gameSize)
@@ -67,10 +85,14 @@ const iceBlast = {
         this.bullets = new Bullets(this.ctx, this.player.augustPos.x, this.player.augustPos.y, this.player.augustSize.w, this.player.augustSize.h)
     },
     createEnemies() {
-        this.enemiesArr.push(new Enemy(this.ctx, this.platformPosition.platformPos.x, this.platformPosition.platformPos.y, this.gameSize))
-        this.enemiesArr.push(new Enemy(this.ctx, this.gameSize))
-        this.enemiesArr.push(new Enemy(this.ctx, this.gameSize))
-        this.enemiesArr.push(new Enemy(this.ctx, this.gameSize))
+        this.platforms.forEach((elm, i) => {
+            if (i === 0) return
+            else if (i % 4 === 0) {
+                if (elm instanceof MovingPlatform) return
+                else if (elm instanceof PowerUpPlatform) return
+                else this.enemiesArr.push(new Enemy(this.ctx, elm.platformPos.x, elm.platformPos.y - 75, this.gameSize))
+            }
+        })
     },
     enemiesClass() {
         this.enemies = new Enemy(this.ctx, this.gameSize)
@@ -91,12 +113,21 @@ const iceBlast = {
     },
     detectCollisions() {
         this.platforms.forEach((eachPlatform) => {
-            if (this.player.augustPos.x < eachPlatform.platformPos.x + eachPlatform.platformSize.w &&
+            if (eachPlatform instanceof PowerUpPlatform) {
+                if (this.player.augustPos.x < eachPlatform.platformPos.x + eachPlatform.platformSize.w &&
+                    this.player.augustPos.x + this.player.augustSize.w > eachPlatform.platformPos.x &&
+                    this.player.augustPos.y + this.player.augustSize.h < eachPlatform.platformPos.y + eachPlatform.platformSize.h &&
+                    this.player.augustSize.h + this.player.augustPos.y - 80 > eachPlatform.platformPos.y) {
+                    if (this.player.augustVel.y > 0) {
+                        this.player.bounce(-36)
+                    }
+                }
+            } else if (this.player.augustPos.x < eachPlatform.platformPos.x + eachPlatform.platformSize.w &&
                 this.player.augustPos.x + this.player.augustSize.w > eachPlatform.platformPos.x &&
                 this.player.augustPos.y + this.player.augustSize.h < eachPlatform.platformPos.y + eachPlatform.platformSize.h &&
                 this.player.augustSize.h + this.player.augustPos.y > eachPlatform.platformPos.y) {
                 if (this.player.augustVel.y > 0) {
-                    this.player.bounce()
+                    this.player.bounce(-16)
                 }
             }
         })
@@ -118,10 +149,37 @@ const iceBlast = {
                 }
             })
         })
+        this.enemiesArr.forEach(elm => {
+            if (elm.enemyPos.x < this.player.augustPos.x + this.player.augustSize.w &&
+                elm.enemyPos.x + elm.enemySize.w > this.player.augustPos.x &&
+                elm.enemyPos.y < this.player.augustPos.y + this.player.augustSize.h &&
+                elm.enemySize.h + elm.enemyPos.y > this.player.augustPos.y) {
+                if (this.player.health > 0) {
+                    console.log('damage');
+                    this.player.health -= 1.5
+                }
+                if (this.player.health === 0) {
+                    this.gameOver()
+                }
+            }
+        })
+    },
+    gameOver() {
+        clearInterval(this.intervalId)
+        this.ctx.drawImage(this.gameOverImgInstance, 0, 0, this.gameSize.w, this.gameSize.h)
+        //score
+        this.ctx.font = '20px sans-serif'
+        this.ctx.fillStyle = '#3A426C'
+        this.ctx.fillText('Your score:', 225, 100)
+        this.ctx.font = '60px sans-serif'
+        if (this.scorePoints < 10) this.ctx.fillText(this.scorePoints, 255, this.gameSize.h / 2)
+        else if (this.scorePoints >= 10 && this.scorePoints < 100) this.ctx.fillText(this.scorePoints, 239, this.gameSize.h / 2)
+        else this.ctx.fillText(this.scorePoints, 223, this.gameSize.h / 2)
     },
     drawAll() {
-        setInterval(() => {
+        this.intervalId = setInterval(() => {
             this.clearAll()
+            this.framesCounter > 5000 ? this.framesCounter = 0 : this.framesCounter++
             this.background.draw()
             this.player.draw()
             this.platforms.forEach(elm => {
@@ -131,7 +189,7 @@ const iceBlast = {
                 }
             })
             this.enemiesArr.forEach(elm => {
-                elm.draw()
+                elm.draw(this.framesCounter)
             })
             this.player.clearBullets()
             this.detectCollisions()
@@ -139,6 +197,7 @@ const iceBlast = {
             this.checkHealth()
             this.score()
             this.drawScore()
+            this.playerFalls()
         }, 1000 / this.FPS)
     }
 }

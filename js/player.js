@@ -1,5 +1,5 @@
 class Player { // August
-    constructor(ctx, posX, posY, gameSizeW, gameSize, platforms) {
+    constructor(ctx, posX, posY, gameSizeW, gameSize, platforms, enemies) {
         this.ctx = ctx;
         this.augustSize = { w: 45, h: 45 }
         this.augustPos = { x: posX, y: posY }
@@ -12,12 +12,14 @@ class Player { // August
         this.keyPressed = []
         this.platforms = platforms
         this.score = 0
+        this.enemies = enemies
+        this.health = 30
+        this.imageInstance = undefined
 
         this.init();
     }
 
     init() {
-        this.draw()
         this.setEventHandlers()
     }
 
@@ -61,7 +63,6 @@ class Player { // August
             else return null
         })
     }
-
     gravity() {
         if (this.augustPos.y >= (this.gameSize.h / 2)) {
             this.augustVel.y += this.augustPhysics.gravity
@@ -72,20 +73,24 @@ class Player { // August
                     eachPlatform.platformPos.y -= this.augustVel.y
                 }
             })
+            this.enemies.forEach(eachEnemy => {
+                if (this.augustVel.y < 0) {
+                    eachEnemy.enemyPos.y -= this.augustVel.y
+                }
+            })
             this.augustPos.y = this.gameSize.h / 2
             this.augustVel.y += this.augustPhysics.gravity
             this.augustPos.y += this.augustVel.y
         }
-        if (this.checkCollision()) this.augustVel.y = -16
     }
 
-    bounce() {
-        this.augustVel.y = -16
+    bounce(vel) {
+        this.augustVel.y = vel
     }
 
-    checkCollision() {
-        if (this.augustPos.y >= this.gameSize.h - this.augustSize.h) return true
-    }
+    // checkCollision() {
+    //     if (this.augustPos.y >= this.gameSize.h - this.augustSize.h) return true
+    // }
 
     crossScreenRight() {
         if (this.augustPos.x > this.gameSize.w) this.augustPos.x = 0 - this.augustSize.w
