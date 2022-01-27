@@ -11,12 +11,12 @@ class Player { // August
         this.bulletsClass = undefined
         this.keyPressed = []
         this.platforms = platforms
-        this.score = 0
         this.enemies = enemies
-        this.health = 50
+        this.health = 100
         this.imageInstance = new Image()
         this.imageInstance.frames = 0
         this.imageInstance.framesIndex = 0
+        this.audio = undefined
 
         this.init();
     }
