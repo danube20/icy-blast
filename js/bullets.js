@@ -1,7 +1,7 @@
 class Bullets {
     constructor(ctx, augustPosX, augustPosY, augustW, augustH) {
         this.ctx = ctx
-        this.bulletPos = { x: augustPosX - 25, y: augustPosY + (augustH - 100) }
+        this.bulletPos = { x: augustPosX + 5, y: augustPosY + (augustH - 100) }
         this.bulletSize = { w: 100, h: 100 }
         this.augustSize = { w: augustW, h: augustH }
         this.augustVel = { x: 25, y: 1 }

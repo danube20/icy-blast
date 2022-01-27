@@ -5,7 +5,6 @@ class Platform {
         this.platformVel = { x: 1.5, y: 0 }
         this.gameSize = gameSize
         this.platformSize = { w: 100, h: sizeH }
-        this.imageinstance = undefined
         this.randomX = 0
         this.imageInstance = new Image()
         this.imageInstance.src = imgSrc

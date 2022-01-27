@@ -1,7 +1,7 @@
 class Player { // August
     constructor(ctx, posX, posY, gameSizeW, gameSize, platforms, enemies) {
         this.ctx = ctx;
-        this.augustSize = { w: 45, h: 45 }
+        this.augustSize = { w: 110, h: 100 }
         this.augustPos = { x: posX, y: posY }
         this.gameSize = gameSize;
         this.gameSizeW = gameSizeW
@@ -13,24 +13,49 @@ class Player { // August
         this.platforms = platforms
         this.score = 0
         this.enemies = enemies
-        this.health = 30
-        this.imageInstance = undefined
+        this.health = 50
+        this.imageInstance = new Image()
+        this.imageInstance.frames = 0
+        this.imageInstance.framesIndex = 0
 
         this.init();
     }
 
     init() {
+        this.imageInstance.src = './img/august_sprite.png'
+        this.imageInstance.frames = 5
+        this.imageInstance.framesIndex = 0
         this.setEventHandlers()
     }
 
-    draw() { // Augusto
-        this.ctx.fillStyle = 'white';
-        this.ctx.fillRect(this.augustPos.x, this.augustPos.y, this.augustSize.w, this.augustSize.h)
+    draw(framesCounter) { // Augusto
+        this.ctx.drawImage(
+            this.imageInstance,
+            this.imageInstance.framesIndex * (this.imageInstance.width / this.imageInstance.frames),
+            0,
+            this.imageInstance.width / this.imageInstance.frames,
+            this.imageInstance.height,
+            this.augustPos.x,
+            this.augustPos.y,
+            this.augustSize.w,
+            this.augustSize.h
+        )
+
+        this.animate(framesCounter)
+
         this.gravity()
         this.bullets.forEach(bullet => bullet.draw())
         this.clearBullets()
     }
 
+    animate(framesCounter) {
+        if (framesCounter % 19 == 0) {
+            this.imageInstance.framesIndex++;
+        }
+        if (this.imageInstance.framesIndex >= this.imageInstance.frames / 2) {
+            this.imageInstance.framesIndex = 0;
+        }
+    }
     movement() {
         this.keyPressed.forEach(elm => {
             if (elm.includes('ArrowRight')) {
@@ -87,10 +112,6 @@ class Player { // August
     bounce(vel) {
         this.augustVel.y = vel
     }
-
-    // checkCollision() {
-    //     if (this.augustPos.y >= this.gameSize.h - this.augustSize.h) return true
-    // }
 
     crossScreenRight() {
         if (this.augustPos.x > this.gameSize.w) this.augustPos.x = 0 - this.augustSize.w

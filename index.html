@@ -11,9 +11,23 @@
 </head>
 
 <body>
-    <div class="board">
-        <canvas id="canvas" width="" height=""></canvas>
+    <div class="container">
+        <div class="text">
+            <img src="./img/logo.png" alt="Ice Blast Logo">
+            <img src="./img/august-january.png" alt="Ice Blast Characters">
+            <button type="button">PLAY</button>
+            <div class="instructions">
+                <p>¡Ayuda a August a escapar de la glaciación!</p>
+                <p>Utiliza las flechas de tu teclado para moverte</p>
+                <p>y escalar las plataformas, y el espacio para disparar.</p>
+            </div>
+        </div>
+
+        <div class="board">
+            <canvas id="canvas" width="" height=""></canvas>
+        </div>
     </div>
+    <script src="js/life.js"></script>
     <script src="js/bullets.js"></script>
     <script src="js/platforms.js"></script>
     <script src="js/background.js"></script>
