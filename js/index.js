@@ -302,13 +302,6 @@ const iceBlast = {
         if (this.scorePoints < 10) this.ctx.fillText(this.scorePoints, 255, this.gameSize.h / 2)
         else if (this.scorePoints >= 10 && this.scorePoints < 100) this.ctx.fillText(this.scorePoints, 239, this.gameSize.h / 2)
         else this.ctx.fillText(this.scorePoints, 223, this.gameSize.h / 2)
-        // limpiamos
-        this.player = undefined
-        this.platforms = []
-        this.enemiesArr = []
-        this.scorePoints = 0
-        this.platformDistance = 50
-        this.framesCounter = 0
     },
     drawAll() {
         this.intervalId = setInterval(() => {
