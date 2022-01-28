@@ -16,7 +16,8 @@ class Player { // August
         this.imageInstance = new Image()
         this.imageInstance.frames = 0
         this.imageInstance.framesIndex = 0
-        this.audio = undefined
+        this.shootAudio = new Audio('./sounds/shoot.mp3')
+        this.shootAudio.volume = 0.2
 
         this.init();
     }
@@ -127,6 +128,8 @@ class Player { // August
 
     shoot() {
         this.bullets.push(new Bullets(this.ctx, this.augustPos.x, this.augustPos.y, this.augustSize.w, this.augustSize.h))
+        this.shootAudio.currentTime = 0
+        this.shootAudio.play()
     }
 
     clearBullets() {

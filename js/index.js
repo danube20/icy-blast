@@ -45,11 +45,11 @@ const iceBlast = {
         this.gameOverImgInstance.src = './img/gameoverbg.png'
         this.lifeImgInstance = new Image()
         this.lifeImgInstance.src = './img/life.png'
-        this.jumpAudio1 = new Audio('./sounds/jump1.mp3')
-        this.isActiveAudio1 = false
-        this.jumpAudio2 = new Audio('./sounds/jump1.mp3')
-        this.isActiveAudio2 = false
+        this.jumpAudio = new Audio('./sounds/jump1.mp3')
         this.jumpAudio.volume = 0.1
+        this.backAudio = new Audio('./sounds/backsong.mp3')
+        this.backAudio.volume = 0.3
+        this.backAudio.loop = true
         this.endGame()
     },
 
@@ -182,6 +182,8 @@ const iceBlast = {
                     this.player.augustSize.h + this.player.augustPos.y - 80 > eachPlatform.platformPos.y) {
                     if (this.player.augustVel.y > 0) {
                         this.player.bounce(-36)
+                        this.jumpAudio.currentTime = 0
+                        this.jumpAudio.play()
                     }
                 }
             } else if (this.player.augustPos.x < eachPlatform.platformPos.x - 35 + eachPlatform.platformSize.w &&
@@ -190,9 +192,8 @@ const iceBlast = {
                 this.player.augustSize.h + this.player.augustPos.y > eachPlatform.platformPos.y) {
                 if (this.player.augustVel.y > 0) {
                     this.player.bounce(-16)
-                    console.log(this.enemiesArr);
-                    this.jumpAudio1.currentTime = 0
-                    this.jumpAudio1.play()
+                    this.jumpAudio.currentTime = 0
+                    this.jumpAudio.play()
                 }
             }
         })
@@ -281,6 +282,7 @@ const iceBlast = {
     drawAll() {
         this.intervalId = setInterval(() => {
             this.clearAll()
+            this.backAudio.play()
             this.framesCounter > 5000 ? this.framesCounter = 0 : this.framesCounter++
             this.background.draw()
             this.player.draw(this.framesCounter)

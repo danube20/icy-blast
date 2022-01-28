@@ -1,5 +1,0 @@
-class Level {
-    constructor(ctx,) {
-
-    }
-}
