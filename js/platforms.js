@@ -15,8 +15,6 @@ class Platform {
     }
     draw() {
         this.ctx.drawImage(this.imageInstance, this.platformPos.x, this.platformPos.y, this.platformSize.w, this.platformSize.h)
-        // this.ctx.fillStyle = 'white'
-        // this.ctx.fillRect(this.platformPos.x, this.platformPos.y, this.platformSize.w, this.platformSize.h)
     }
     randomPosX() {
         this.platformPos.x = Math.random() * (420 - 0)
@@ -38,9 +36,7 @@ class MovingPlatform extends Platform {
         this.platformPos.x += this.platformVel.x
     }
     checkColission() {
-        if (this.platformPos.x + this.platformSize.w > this.gameSize.w || this.platformPos.x < 0) {
-            this.platformVel.x *= -1
-        }
+        if (this.platformPos.x + this.platformSize.w > this.gameSize.w || this.platformPos.x < 0) this.platformVel.x *= -1
     }
 }
 class PowerUpPlatform extends Platform {

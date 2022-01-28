@@ -106,9 +106,7 @@ const iceBlast = {
     clearPlatforms() {
         this.platforms.forEach((eachPlatform, i) => {
             if (eachPlatform.platformPos.y > this.gameSize.h) {
-                if (!(eachPlatform instanceof FirstPlatform)) {
-                    this.platforms.splice(i, 1)
-                }
+                if (!(eachPlatform instanceof FirstPlatform)) this.platforms.splice(i, 1)
             }
         })
     },
@@ -116,9 +114,7 @@ const iceBlast = {
         this.player = new Player(this.ctx, this.gameSize.w / 2 - 20, this.gameSize.h - 140, this.gameSize.w, this.gameSize, this.platforms, this.enemiesArr)
     },
     playerFalls() {
-        if (this.player.augustPos.y > this.gameSize.h - 50) {
-            this.gameOver()
-        }
+        if (this.player.augustPos.y > this.gameSize.h - 50) this.gameOver()
     },
     createBackground() {
         this.background = new BaseBackground(this.ctx, 0, -1480, this.gameSize)
@@ -142,7 +138,6 @@ const iceBlast = {
                 if (elm instanceof MovingPlatform) return
                 else if (elm instanceof PowerUpPlatform) return
                 else if (elm instanceof BreakingPlatform) return
-
                 else this.enemiesArr.push(new November(this.ctx, elm.platformPos.x, elm.platformPos.y - 63, this.gameSize))
             }
             else if (i === this.platformTypes.lastIndexOf(1)) {
@@ -159,9 +154,7 @@ const iceBlast = {
     },
     clearEnemies() {
         this.enemiesArr.forEach((elm, i) => {
-            if (elm.enemyPos.y > this.gameSize.h) {
-                this.enemiesArr.splice(i, 1)
-            }
+            if (elm.enemyPos.y > this.gameSize.h) this.enemiesArr.splice(i, 1)
         })
     },
     clearAll() {
@@ -175,9 +168,7 @@ const iceBlast = {
         }
 
         this.enemiesArr.forEach(elm => {
-            if (elm.health === 0) {
-                this.scorePoints += 20
-            }
+            if (elm.health === 0) this.scorePoints += 20
         })
     },
     drawScore() {
@@ -227,9 +218,7 @@ const iceBlast = {
                     elm.bulletPos.x + elm.bulletSize.w - 45 > elm1.enemyPos.x &&
                     elm.bulletPos.y < elm1.enemyPos.y + elm1.enemySize.h &&
                     elm.bulletSize.h - 45 + elm.bulletPos.y > elm1.enemyPos.y) {
-                    if (elm1.health > 0) {
-                        elm1.health -= 5
-                    }
+                    if (elm1.health > 0) elm1.health -= 5
                     if (elm1.health === 0) {
                         this.enemyPoints += 20
                         let id = this.enemiesArr.indexOf(elm1)
@@ -248,17 +237,11 @@ const iceBlast = {
                         this.enemies.health -= 50
                         this.collisionState = true
                     }
-                    if (this.enemies.health === 0) {
-                        this.enemiesArr[i].isFalling = true
-                    }
+                    if (this.enemies.health === 0) this.enemiesArr[i].isFalling = true
                 }
                 else {
-                    if (this.player.health > 0) {
-                        this.player.health -= 1
-                    }
-                    if (this.player.health === 0) {
-                        this.gameOver()
-                    }
+                    if (this.player.health > 0) this.player.health -= 1
+                    if (this.player.health === 0) this.gameOver()
                 }
             }
         })
@@ -272,31 +255,19 @@ const iceBlast = {
         }
     },
     removeLife() {
-        if (this.player.health === 80) {
-            this.lifeArr.shift()
-        } else if (this.player.health === 60) {
-            this.lifeArr.shift()
-        } else if (this.player.health === 40) {
-            this.lifeArr.shift()
-        } else if (this.player.health === 20) {
-            this.lifeArr.shift()
-        } else if (this.player.health === 0) {
-            this.gameOver()
-        }
-    },
-    isGameOver() {
-
+        if (this.player.health === 80) this.lifeArr.shift()
+        else if (this.player.health === 60) this.lifeArr.shift()
+        else if (this.player.health === 40) this.lifeArr.shift()
+        else if (this.player.health === 20) this.lifeArr.shift()
+        else if (this.player.health === 0) this.gameOver()
     },
     gameOver() {
         clearInterval(this.intervalId)
         this.ctx.drawImage(this.gameOverImgInstance, 0, 0, this.gameSize.w, this.gameSize.h)
         //score
         this.ctx.font = '22px sans-serif'
-        if (this.scorePoints < 300) {
-            this.ctx.fillStyle = '#3A426C'
-        } else {
-            this.ctx.fillStyle = 'white'
-        }
+        if (this.scorePoints < 300) this.ctx.fillStyle = '#3A426C'
+        else this.ctx.fillStyle = 'white'
         this.ctx.fillText('Your score:', 220, 300)
         this.ctx.font = '60px sans-serif'
         if (this.scorePoints < 10) this.ctx.fillText(this.scorePoints, 255, this.gameSize.h / 2)
@@ -312,25 +283,17 @@ const iceBlast = {
             this.player.draw(this.framesCounter)
             this.platforms.forEach(elm => {
                 elm.draw()
-                if (elm instanceof MovingPlatform) {
-                    elm.move()
-                }
+                if (elm instanceof MovingPlatform) elm.move()
                 if (elm instanceof BreakingPlatform) {
-                    if (elm.isBroken) {
-                        elm.break()
-                    }
+                    if (elm.isBroken) elm.break()
                 }
             })
             this.enemiesArr.forEach(elm => {
                 elm.draw(this.framesCounter)
-                if (elm.isFalling) {
-                    elm.fall()
-                }
+                if (elm.isFalling) elm.fall()
             })
             this.scoreBall.draw()
-            this.lifeArr.forEach(elm => {
-                elm.draw()
-            })
+            this.lifeArr.forEach(elm => elm.draw())
             this.player.clearBullets()
             this.detectCollisions()
             this.player.movement()
@@ -342,9 +305,8 @@ const iceBlast = {
             this.clearEnemies()
             this.endGame()
             if (this.scorePoints > 100) {
-                if (this.background.backPos.y < -750) {
-                    this.background.move()
-                } else {
+                if (this.background.backPos.y < -750) this.background.move()
+                else {
                     this.background.backVel.y = 0
                     this.background.backGravity = 0
                 }

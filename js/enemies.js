@@ -39,12 +39,8 @@ class Enemy {
         this.animate(framesCounter)
     }
     animate(framesCounter) {
-        if (framesCounter % 10 == 0) {
-            this.imageInstance.framesIndex++;
-        }
-        if (this.imageInstance.framesIndex >= this.imageInstance.frames) {
-            this.imageInstance.framesIndex = 0;
-        }
+        if (framesCounter % 10 == 0) this.imageInstance.framesIndex++
+        if (this.imageInstance.framesIndex >= this.imageInstance.frames) this.imageInstance.framesIndex = 0
     }
 }
 
@@ -84,12 +80,8 @@ class November extends Enemy {
         this.animate(framesCounter)
     }
     animate(framesCounter) {
-        if (framesCounter % 10 == 0) {
-            this.imageInstance.framesIndex++;
-        }
-        if (this.imageInstance.framesIndex >= this.imageInstance.frames) {
-            this.imageInstance.framesIndex = 0;
-        }
+        if (framesCounter % 10 == 0) this.imageInstance.framesIndex++
+        if (this.imageInstance.framesIndex >= this.imageInstance.frames) this.imageInstance.framesIndex = 0;
     }
 }
 
@@ -129,11 +121,7 @@ class March extends Enemy {
         this.animate(framesCounter)
     }
     animate(framesCounter) {
-        if (framesCounter % 4 == 0) {
-            this.imageInstance.framesIndex++;
-        }
-        if (this.imageInstance.framesIndex >= this.imageInstance.frames) {
-            this.imageInstance.framesIndex = 0;
-        }
+        if (framesCounter % 4 == 0) this.imageInstance.framesIndex++
+        if (this.imageInstance.framesIndex >= this.imageInstance.frames) this.imageInstance.framesIndex = 0
     }
 }

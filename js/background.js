@@ -23,14 +23,3 @@ class BaseBackground {
         this.backPos.y += this.backVel.y
     }
 }
-
-class BackgroundY {
-    constructor(ctx, posX, posY, gameSize) {
-        this.ctx = ctx
-        this.backYPos = { x: posX, y: posY }
-        this.gameSize = gameSize;
-    }
-    move() {
-
-    }
-}

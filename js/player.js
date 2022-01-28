@@ -51,12 +51,8 @@ class Player { // August
     }
 
     animate(framesCounter) {
-        if (framesCounter % 19 == 0) {
-            this.imageInstance.framesIndex++;
-        }
-        if (this.imageInstance.framesIndex >= this.imageInstance.frames / 2) {
-            this.imageInstance.framesIndex = 0;
-        }
+        if (framesCounter % 19 == 0) this.imageInstance.framesIndex++
+        if (this.imageInstance.framesIndex >= this.imageInstance.frames / 2) this.imageInstance.framesIndex = 0
     }
     movement() {
         this.keyPressed.forEach(elm => {
@@ -96,14 +92,10 @@ class Player { // August
             this.augustPos.y += this.augustVel.y
         } else {
             this.platforms.forEach((eachPlatform) => {
-                if (this.augustVel.y < 0) {
-                    eachPlatform.platformPos.y -= this.augustVel.y
-                }
+                if (this.augustVel.y < 0) eachPlatform.platformPos.y -= this.augustVel.y
             })
             this.enemies.forEach(eachEnemy => {
-                if (this.augustVel.y < 0) {
-                    eachEnemy.enemyPos.y -= this.augustVel.y
-                }
+                if (this.augustVel.y < 0) eachEnemy.enemyPos.y -= this.augustVel.y
             })
             this.augustPos.y = this.gameSize.h / 2
             this.augustVel.y += this.augustPhysics.gravity
