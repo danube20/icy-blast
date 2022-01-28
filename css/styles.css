@@ -71,3 +71,9 @@ img {
     color: white;
     text-align: center;
 }
+
+.devs {
+    font-size: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    padding-top: 20px;
+}
