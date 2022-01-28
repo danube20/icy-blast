@@ -1,8 +1,9 @@
 class LifeBall {
-    constructor(ctx, gameSize, posX) {
+    constructor(ctx, gameSize, posX, posY, w, h) {
         this.ctx = ctx
         this.gameSize = gameSize
-        this.posX = posX
+        this.ballPos = { x: posX, y: posY }
+        this.ballSize = { w: w, h: h }
         this.init()
     }
     init() {
@@ -10,6 +11,6 @@ class LifeBall {
         this.imageInstance.src = './img/life.png'
     }
     draw() {
-        this.ctx.drawImage(this.imageInstance, this.posX, 40, 25, 25)
+        this.ctx.drawImage(this.imageInstance, this.ballPos.x, this.ballPos.y, this.ballSize.w, this.ballSize.h)
     }
 }

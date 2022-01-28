@@ -7,8 +7,8 @@ const iceBlast = {
     ctx: undefined,
     player: undefined,
     background: undefined,
-    platformTypes: [1, 1, 1, 1, 1, 2, 3, 2, 1, 1, 1, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 1, 2, 2, 1, 2, 1, 3, 1, 2, 1, 2, 2, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2,
-        2, 1, 1, 1, 3, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 3, 1, 2, 2, 2, 2, 1, 1, 1, 1, 3, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1],
+    platformTypes: [1, 1, 1, 1, 4, 2, 3, 2, 1, 4, 1, 4, 2, 2, 2, 2, 4, 2, 1, 4, 1, 1, 2, 2, 4, 2, 1, 3, 1, 2, 4, 2, 2, 2, 3, 2, 2, 2, 4, 2, 2, 2, 4, 4, 2, 1, 2,
+        2, 1, 1, 1, 3, 2, 2, 2, 1, 4, 2, 2, 2, 2, 2, 2, 2, 1, 4, 2, 4, 4, 4, 2, 2, 3, 1, 2, 2, 2, 2, 1, 4, 1, 1, 3, 1, 2, 2, 4, 1, 1, 4, 1, 1, 1, 1, 3, 1, 1, 1, 1],
     platforms: [],
     platformDistance: 50,
     enemies: undefined,
@@ -28,6 +28,7 @@ const iceBlast = {
     jumpAudio: undefined,
     collisionState: undefined,
     lastIndexPlatform: undefined,
+    scoreBall: undefined,
 
     init() {
         this.setContext()
@@ -41,6 +42,9 @@ const iceBlast = {
         this.createEnemies()
         this.enemiesClass()
         this.populateLifeArr()
+        this.endGame()
+        this.createScoreBall()
+
         this.gameOverImgInstance = new Image()
         this.gameOverImgInstance.src = './img/gameoverbg.png'
         this.lifeImgInstance = new Image()
@@ -48,9 +52,10 @@ const iceBlast = {
         this.jumpAudio = new Audio('./sounds/jump1.mp3')
         this.jumpAudio.volume = 0.1
         this.backAudio = new Audio('./sounds/backsong.mp3')
-        this.backAudio.volume = 0.3
-        this.backAudio.loop = true
-        this.endGame()
+        this.backAudio.volume = 0.2
+        this.scoreBallImgInstance = new Image()
+        this.scoreBallImgInstance.src = './img/score-ball.png'
+
     },
 
     getStartButton() {
@@ -77,19 +82,21 @@ const iceBlast = {
         this.platformTypes.forEach((eachNumber) => {
             if (eachNumber === 1) {
                 this.platforms.push(new Platform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/platform.png'))
-                this.platformDistance += 130
+                this.platformDistance += 120
             } else if (eachNumber === 2) {
                 this.platforms.push(new MovingPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/platform.png'))
-                this.platformDistance += 150
+                this.platformDistance += 130
             } else if (eachNumber === 3) {
                 this.platforms.push(new PowerUpPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 100, './img/powerUpPlatform.png'))
-                this.platformDistance += 140
+                this.platformDistance += 130
+            } else if (eachNumber === 4) {
+                this.platforms.push(new BreakingPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/breaking-platform.png'))
+                this.platformDistance += 100
             }
         })
     },
     endGame() {
         this.lastIndexPlatform = this.platformTypes.lastIndexOf(1)
-        console.log(this.lastIndexPlatform)
         if (this.platforms[this.lastIndexPlatform].platformPos.y > 750) {
             this.ctx.font = '30px sans-serif'
             this.ctx.fillStyle = 'white'
@@ -114,7 +121,10 @@ const iceBlast = {
         }
     },
     createBackground() {
-        this.background = new BaseBackground(this.ctx, 0, 0, this.gameSize)
+        this.background = new BaseBackground(this.ctx, 0, -1480, this.gameSize)
+    },
+    createScoreBall() {
+        this.scoreBall = new LifeBall(this.ctx, this.gameSize, 246, 22, 60, 60)
     },
     createBullets() {
         this.bullets = new Bullets(this.ctx, this.player.augustPos.x, this.player.augustPos.y, this.player.augustSize.w, this.player.augustSize.h)
@@ -125,16 +135,20 @@ const iceBlast = {
             else if (i % 4 === 0) {
                 if (elm instanceof MovingPlatform) return
                 else if (elm instanceof PowerUpPlatform) return
+                else if (elm instanceof BreakingPlatform) return
                 else this.enemiesArr.push(new Enemy(this.ctx, elm.platformPos.x, elm.platformPos.y - 75, this.gameSize))
             }
             else if (i % 5 === 0) {
                 if (elm instanceof MovingPlatform) return
                 else if (elm instanceof PowerUpPlatform) return
+                else if (elm instanceof BreakingPlatform) return
+
                 else this.enemiesArr.push(new November(this.ctx, elm.platformPos.x, elm.platformPos.y - 63, this.gameSize))
             }
             else if (i === this.platformTypes.lastIndexOf(1)) {
                 if (elm instanceof MovingPlatform) return
                 else if (elm instanceof PowerUpPlatform) return
+                else if (elm instanceof BreakingPlatform) return
                 else this.enemiesArr.push(new March(this.ctx, elm.platformPos.x, elm.platformPos.y - 63, this.gameSize))
             }
         })
@@ -174,7 +188,7 @@ const iceBlast = {
         else this.ctx.fillText(this.scorePoints, 249, 62)
     },
     detectCollisions() {
-        this.platforms.forEach((eachPlatform) => {
+        this.platforms.forEach((eachPlatform, i) => {
             if (eachPlatform instanceof PowerUpPlatform) {
                 if (this.player.augustPos.x < eachPlatform.platformPos.x + eachPlatform.platformSize.w &&
                     this.player.augustPos.x + this.player.augustSize.w > eachPlatform.platformPos.x &&
@@ -187,13 +201,21 @@ const iceBlast = {
                     }
                 }
             } else if (this.player.augustPos.x < eachPlatform.platformPos.x - 35 + eachPlatform.platformSize.w &&
-                this.player.augustPos.x - 47 + this.player.augustSize.w > eachPlatform.platformPos.x &&
+                this.player.augustPos.x - 40 + this.player.augustSize.w > eachPlatform.platformPos.x &&
                 this.player.augustPos.y + this.player.augustSize.h < eachPlatform.platformPos.y + eachPlatform.platformSize.h &&
                 this.player.augustSize.h + this.player.augustPos.y > eachPlatform.platformPos.y) {
                 if (this.player.augustVel.y > 0) {
-                    this.player.bounce(-16)
-                    this.jumpAudio.currentTime = 0
-                    this.jumpAudio.play()
+                    if (eachPlatform instanceof BreakingPlatform) {
+                        this.player.bounce(-16)
+                        this.jumpAudio.currentTime = 0
+                        this.jumpAudio.play()
+                        this.platforms[i].isBroken = true
+
+                    } else {
+                        this.player.bounce(-16)
+                        this.jumpAudio.currentTime = 0
+                        this.jumpAudio.play()
+                    }
                 }
             }
         })
@@ -242,9 +264,11 @@ const iceBlast = {
         })
     },
     populateLifeArr() {
+        let separation = 310
         for (let i = 0; i < 5; i++) {
-            this.lifeArr.push(new LifeBall(this.ctx, this.gameSize, this.ballPosX))
-            this.ballPosX += 35
+            separation += 35
+            this.lifeArr.push(new LifeBall(this.ctx, this.gameSize, separation, 40, 25, 25))
+
         }
     },
     removeLife() {
@@ -260,12 +284,19 @@ const iceBlast = {
             this.gameOver()
         }
     },
+    isGameOver() {
+
+    },
     gameOver() {
         clearInterval(this.intervalId)
         this.ctx.drawImage(this.gameOverImgInstance, 0, 0, this.gameSize.w, this.gameSize.h)
         //score
         this.ctx.font = '22px sans-serif'
-        this.ctx.fillStyle = '#3A426C'
+        if (this.scorePoints < 300) {
+            this.ctx.fillStyle = '#3A426C'
+        } else {
+            this.ctx.fillStyle = 'white'
+        }
         this.ctx.fillText('Your score:', 220, 300)
         this.ctx.font = '60px sans-serif'
         if (this.scorePoints < 10) this.ctx.fillText(this.scorePoints, 255, this.gameSize.h / 2)
@@ -291,6 +322,11 @@ const iceBlast = {
                 if (elm instanceof MovingPlatform) {
                     elm.move()
                 }
+                if (elm instanceof BreakingPlatform) {
+                    if (elm.isBroken) {
+                        elm.break()
+                    }
+                }
             })
             this.enemiesArr.forEach(elm => {
                 elm.draw(this.framesCounter)
@@ -298,6 +334,7 @@ const iceBlast = {
                     elm.fall()
                 }
             })
+            this.scoreBall.draw()
             this.lifeArr.forEach(elm => {
                 elm.draw()
             })
@@ -311,6 +348,25 @@ const iceBlast = {
             this.removeLife()
             this.clearEnemies()
             this.endGame()
+            if (this.scorePoints > 100) {
+                if (this.background.backPos.y < -750) {
+                    this.background.move()
+                } else {
+                    this.background.backVel.y = 0
+                    this.background.backGravity = 0
+                }
+            }
+            if (this.scorePoints > 150) {
+                if (this.background.backPos.y < 0) {
+                    this.background.backGravity = .1
+                    this.background.backVel.y += this.background.backGravity
+                    this.background.backPos.y += this.background.backVel.y
+                    this.background.move()
+                } else {
+                    this.background.backVel.y = 0
+                    this.background.backGravity = 0
+                }
+            }
         }, 1000 / this.FPS)
     }
 }

@@ -48,3 +48,17 @@ class PowerUpPlatform extends Platform {
         super(ctx, gameSize, posY, sizeH, imgSrc)
     }
 }
+
+class BreakingPlatform extends Platform {
+    constructor(ctx, gameSize, posY, sizeH, imgSrc) {
+        super(ctx, gameSize, posY, sizeH, imgSrc)
+        this.bPlatformVel = { x: 0, y: 0 }
+        this.bPlatformPhysics = { gravity: 2.6 }
+    }
+
+    break() {
+        this.bPlatformVel.y += this.bPlatformPhysics.gravity
+        this.platformPos.y += this.bPlatformVel.y
+    }
+
+}

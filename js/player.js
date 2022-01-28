@@ -16,6 +16,7 @@ class Player { // August
         this.imageInstance = new Image()
         this.imageInstance.frames = 0
         this.imageInstance.framesIndex = 0
+        this.audio = undefined
         this.shootAudio = new Audio('./sounds/shoot.mp3')
         this.shootAudio.volume = 0.2
 
