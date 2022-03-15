@@ -21,12 +21,14 @@ class Platform {
         this.randomX = this.platformPos.x
     }
 }
+
 class FirstPlatform extends Platform {
     constructor(posX, ctx, gameSize, posY, sizeH, imgSrc) {
         super(ctx, gameSize, posY, sizeH, imgSrc)
         this.platformPos = { x: posX, y: posY }
     }
 }
+
 class MovingPlatform extends Platform {
     constructor(ctx, gameSize, posY, sizeH, imgSrc) {
         super(ctx, gameSize, posY, sizeH, imgSrc)
@@ -39,6 +41,7 @@ class MovingPlatform extends Platform {
         if (this.platformPos.x + this.platformSize.w > this.gameSize.w || this.platformPos.x < 0) this.platformVel.x *= -1
     }
 }
+
 class PowerUpPlatform extends Platform {
     constructor(ctx, gameSize, posY, sizeH, imgSrc) {
         super(ctx, gameSize, posY, sizeH, imgSrc)

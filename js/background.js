@@ -7,7 +7,6 @@ class BaseBackground {
         this.backVel = { x: 0, y: 0 }
         this.backGravity = 1
 
-
         this.init()
     }
 

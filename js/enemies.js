@@ -11,6 +11,7 @@ class Enemy {
         this.imageInstance.frames = 0
         this.imageInstance.framesIndex = 0
         this.isFalling = false
+
         this.init()
     }
 

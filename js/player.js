@@ -94,6 +94,7 @@ class Player { // August
             this.augustPos.x = x
         })
     }
+
     gravity() {
         if (this.augustPos.y >= (this.gameSize.h / 2)) {
             this.augustVel.y += this.augustPhysics.gravity
