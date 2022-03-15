@@ -77,3 +77,22 @@ img {
     border-top: 1px solid rgba(255, 255, 255, 0.5);
     padding-top: 20px;
 }
+
+/* RESPONSIVE MOBILE */
+
+@media screen and (max-width: 1090px) {
+    .board {
+        margin: 0 auto;
+
+    }
+
+    .container {
+        flex-direction: column-reverse;
+    }
+}
+
+@media screen and (max-width: 820px) {
+    #canvas {
+        width: 800px;
+    }
+}

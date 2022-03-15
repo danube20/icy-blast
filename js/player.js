@@ -85,6 +85,14 @@ class Player { // August
             else if (key === ' ') this.keyPressed = []
             else return null
         })
+
+        // Mobile orientation
+
+        window.addEventListener('deviceorientation', event => {
+            const x = event.beta
+
+            this.augustPos.x = x
+        })
     }
     gravity() {
         if (this.augustPos.y >= (this.gameSize.h / 2)) {

@@ -73,6 +73,7 @@ const iceBlast = {
             w: 550,
             h: window.innerHeight - 20
         }
+
         document.querySelector('#canvas').setAttribute('width', this.gameSize.w)
         document.querySelector('#canvas').setAttribute('height', this.gameSize.h)
     },
