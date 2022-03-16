@@ -81,21 +81,21 @@ const iceBlast = {
         this.platforms.push(new FirstPlatform(240, this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/platform.png'))
         this.platformDistance += 150
         this.platformTypes.forEach((eachNumber) => {
-            switch (eachNumber) {
-                case 1:
-                    this.platforms.push(new Platform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/platform.png'))
-                    this.platformDistance += 120
-                case 2:
-                    this.platforms.push(new MovingPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/platform.png'))
-                    this.platformDistance += 130
-                case 3:
-                    this.platforms.push(new PowerUpPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 100, './img/powerUpPlatform.png'))
-                    this.platformDistance += 130
-                case 4:
-                    this.platforms.push(new BreakingPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/breaking-platform.png'))
-                    this.platformDistance += 100
-                default:
-                    break;
+            if (eachNumber === 1) {
+                this.platforms.push(new Platform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/platform.png'))
+                this.platformDistance += 120
+            }
+            else if (eachNumber === 2) {
+                this.platforms.push(new MovingPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/platform.png'))
+                this.platformDistance += 130
+            }
+            else if (eachNumber === 3) {
+                this.platforms.push(new PowerUpPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 100, './img/powerUpPlatform.png'))
+                this.platformDistance += 130
+            }
+            else if (eachNumber === 4) {
+                this.platforms.push(new BreakingPlatform(this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/breaking-platform.png'))
+                this.platformDistance += 100
             }
         })
     },
