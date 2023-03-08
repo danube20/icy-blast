@@ -78,7 +78,7 @@ const iceBlast = {
         document.querySelector('#canvas').setAttribute('height', this.gameSize.h)
     },
     createPlatform() {
-        this.platforms.push(new FirstPlatform(240, this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/platform.png'))
+        this.platforms.push(new FirstPlatform(20, this.ctx, this.gameSize, this.gameSize.h - this.platformDistance, 20, './img/platform.png'))
         this.platformDistance += 150
         this.platformTypes.forEach((eachNumber) => {
             if (eachNumber === 1) {
